@@ -54,32 +54,38 @@ class PostController extends Controller
 
     public function update(UpdatePostRequest $request, Post $post)
     {
-        if ($request->hasFile('image')) {
+        if ($post->user_id !== auth()->id()) {
+            return response()->json([
+                'message' => 'Anda tidak memiliki akses untuk mengubah post ini.'
+            ], 403);
+        }
 
+        if ($request->hasFile('image')) {
             Storage::disk('public')->delete($post->image);
 
-            $post->image = $request
-                ->file('image')
-                ->store('posts', 'public');
+            $post->image = $request->file('image')->store('posts', 'public');
         }
 
         $post->caption = $request->caption;
-
         $post->save();
 
-        return new PostResource(
-            $post->load('user')
-        );
+        return new PostResource($post->load('user'));
     }
 
     public function destroy(Post $post)
     {
+        if ($post->user_id !== auth()->id()) {
+            return response()->json([
+                'message' => 'Anda tidak memiliki akses untuk menghapus post ini.'
+            ], 403);
+        }
+
         Storage::disk('public')->delete($post->image);
 
         $post->delete();
 
         return response()->json([
-            'message' => 'Post berhasil dihapus'
+            'message' => 'Post berhasil dihapus.'
         ]);
     }
 }
