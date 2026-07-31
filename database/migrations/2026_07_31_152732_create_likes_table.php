@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('post_id')->nullable()->constrained('posts')->nullOnDelete();
             $table->timestamps();
         });
     }
