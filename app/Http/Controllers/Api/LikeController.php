@@ -21,6 +21,7 @@ class LikeController extends Controller
 
             return response()->json([
                 'liked' => false,
+                'likes_count' => $post->likes()->count(),
                 'message' => 'Unlike berhasil'
             ]);
         }
@@ -32,6 +33,7 @@ class LikeController extends Controller
 
         return response()->json([
             'liked' => true,
+            'likes_count' => $post->likes()->count(),
             'message' => 'Like berhasil'
         ]);
     }

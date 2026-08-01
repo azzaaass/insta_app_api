@@ -7,6 +7,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -88,4 +89,24 @@ class PostController extends Controller
             'message' => 'Post berhasil dihapus.'
         ]);
     }
+
+ public function userPosts(User $user)
+{
+    $posts = Post::where('user_id', $user->id)
+        ->latest()
+        ->with('user:id,name,username')
+        ->withCount(['likes', 'comments'])
+        ->get()
+        ->map(function ($post) {
+
+            $post->image = asset('storage/' . $post->image);
+
+            return $post;
+
+        });
+
+    return response()->json([
+        'data' => $posts
+    ]);
+}
 }

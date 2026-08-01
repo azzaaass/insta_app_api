@@ -54,7 +54,7 @@ class CommentController extends Controller
 
     public function destroy(Comment $comment)
     {
-        if ($comment->user_id !== auth()->id()) {
+        if ($comment->user_id !== auth()->id() && $comment->post->user_id !== auth()->id()) {
             return response()->json([
                 'message' => 'Anda tidak memiliki akses.'
             ], 403);
