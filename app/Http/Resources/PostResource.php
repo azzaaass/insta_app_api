@@ -32,6 +32,10 @@ class PostResource extends JsonResource
             'likes_count' => $this->likes_count,
 
             'comments_count' => $this->comments_count,
+
+            'is_liked' => auth()->check()
+                ? $this->likes()->where('user_id', auth()->id())->exists()
+                : false,
         ];
     }
 }
